@@ -16,7 +16,7 @@
 * importAllLines(path,handler);
 */
 function importAllLines(path,callback) {
-    
+            
     var copier = document.createElement("textarea");
     copier.value = path;
     document.body.appendChild(copier);
@@ -24,8 +24,19 @@ function importAllLines(path,callback) {
     document.execCommand("copy");
     document.body.removeChild(copier);
 
+    var mouseEvent = function() {
+        selector.removeEventListener("mousemove",mouseEvent);
+        selector.click();
+        setTimeout(function(){
+            document.body.removeChild(selector);
+        },100);
+    };
+
+    var cssText = "position:fixed;top:-50%;left:-50%;width:200%;height:200%;";
     var selector = document.createElement("input");
     selector.setAttribute("type","file");
+    selector.setAttribute("style",cssText);
+    selector.addEventListener("mousemove",mouseEvent);
     selector.addEventListener("change", function (event) {
         var file = event.target.files[0];
         var reader = new FileReader();
@@ -34,13 +45,6 @@ function importAllLines(path,callback) {
         };
         reader.readAsText(file);
     });
-
-    var mouseEvent = function() {
-        document.body.removeEventListener("mousemove",mouseEvent);
-        selector.click();
-        document.body.removeChild(selector);
-    };
-    document.body.addEventListener("mousemove",mouseEvent);
     alert("Press [CTRL]+V or [COMMAND]+V to paste the file path when prompted. ");
     document.body.appendChild(selector);
 }
